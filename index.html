@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Campo  Parras Valley</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+/* Forzar fondo oscuro en TODOS los navegadores y dispositivos */
+html{background:#0C1A0C !important;min-height:100%;}
+body{background:#0C1A0C !important;color:#D8ECC0;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;min-height:100vh;overscroll-behavior:none;}
+#root{background:#0C1A0C;min-height:100vh;}
+
+/* HDR */
+.hdr{background:#0A160A;border-bottom:2px solid rgba(126,200,80,0.2);position:sticky;top:0;z-index:100;padding:0;box-shadow:0 4px 24px rgba(0,0,0,0.6);}
+.hdr-top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 10px;}
+.logo-area{display:flex;align-items:center;gap:10px;}
+.logo-icon{font-size:28px;line-height:1;}
+.logo-text{font-size:13px;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#7EC850;}
+.logo-sub{font-size:9px;color:#3A6A3A;letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.sem-nav{display:flex;align-items:center;gap:8px;}
+.sem-btn{background:#142814;border:2px solid #2A5A2A;border-radius:10px;color:#7EC850;font-size:20px;font-weight:900;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:system-ui;}
+.sem-btn:active{background:#1E3A1E;border-color:#7EC850;}
+.sem-label{text-align:center;}
+.sem-fecha{font-size:12px;font-weight:900;color:#C8E8A0;letter-spacing:0.5px;}
+.sem-hoy{font-size:9px;color:#7EC850;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-top:1px;}
+
+/* RANCHO TABS */
+.rtabs{display:flex;overflow-x:auto;padding:0 12px 14px;scrollbar-width:none;gap:8px;}
+.rtabs::-webkit-scrollbar{display:none;}
+.rtab{flex:1;min-width:74px;padding:10px 6px;border:2px solid #1E2E1E;border-radius:12px;background:#0E1E0E;font-family:system-ui;font-size:12px;font-weight:900;cursor:pointer;text-align:center;color:#3A5A3A;letter-spacing:0.5px;transition:all 0.15s;position:relative;}
+
+.rtab.on{color:#0C1A0C;border-color:transparent;background:var(--rc,#7EC850);text-shadow:none;}
+.rtab .pin-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:#1E3A1E;}
+.rtab.on .pin-dot{background:rgba(0,0,0,0.3);}
+
+/* MAIN */
+.main{background:#0C1A0C;padding:0 0 100px;}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;flex-wrap:wrap;gap:8px;}
+.sem-badge{padding:4px 12px;border-radius:20px;font-size:10px;font-weight:900;letter-spacing:1px;text-transform:uppercase;}
+.sem-badge.ok{background:#1A3A1A;color:#7EC850;border:1.5px solid #3A7A3A;}
+.sem-badge.no{background:#2A1E0A;color:#E8A030;border:1.5px solid #6A4A1A;}
+.acciones{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+.btn-accion{padding:8px 14px;border:2px solid;border-radius:9px;font-family:system-ui;font-size:11px;font-weight:900;cursor:pointer;letter-spacing:0.5px;background:transparent;}
+.btn-verde{color:#7EC850;border-color:#3A7A3A;}
+.btn-verde:active{background:#1A3A1A;}
+.btn-rojo{color:#F08080;border-color:#7A2A2A;}
+.btn-rojo:active{background:#2A0E0E;}
+.btn-oro{color:#E8A030;border-color:#6A4A1A;}
+.btn-oro:active{background:#2A1E0A;}
+.msg-ok{font-size:11px;color:#7EC850;font-weight:900;}
+
+/* TABLA */
+.tabla-wrap{overflow-x:auto;padding:0;-webkit-overflow-scrolling:touch;background:#0C1A0C;}
+table{border-collapse:collapse;width:100%;min-width:500px;background:#0C1A0C;}
+thead th{background:#081208;padding:10px 6px;font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#3A6A3A;border-bottom:2px solid #1E3A1E;white-space:nowrap;}
+th.dia-h{min-width:58px;text-align:center;}
+th.prod-h{text-align:left;padding-left:14px;min-width:120px;position:sticky;left:0;background:#081208;z-index:10;}
+th.tot-h{min-width:54px;text-align:center;color:#E8A030;}
+.hoy-h{color:#7EC850 !important;border-bottom:2px solid #7EC850 !important;background:#0A1E0A !important;}
+.hoy-lbl{font-size:9px;color:#7EC850;display:block;font-weight:900;letter-spacing:1px;}
+
+/* FILAS */
+tr.prod-row td{border-top:1px solid #0E220E;}
+td.prod-lbl{position:sticky;left:0;z-index:5;background:#0E1A0E;padding:0 10px 0 14px;vertical-align:middle;border-right:2px solid #1A3A1A;}
+td.tipo-lbl{padding:3px 8px;font-size:9px;font-weight:900;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;border-right:1px solid #0E220E;background:#081208;}
+td.tipo-org{color:#7EC850;}
+td.tipo-conv{color:#C090F0;}
+td.celda{padding:2px;border:1px solid #0E220E;min-width:58px;background:#0C1A0C;}
+td.celda.hoy-col{border-left:2px solid #2A5A2A;border-right:2px solid #2A5A2A;background:#0A1E0A;}
+td.total-celda{text-align:center;padding:8px 4px;background:#081208;font-family:Georgia,serif;font-weight:900;font-size:16px;}
+tr.sep-row td{height:6px;background:#081208;border:none;}
+tr.total-row td{background:#081208;border-top:2px solid #2A5A2A;padding:10px 6px;text-align:center;font-family:Georgia,serif;font-weight:900;font-size:18px;color:#C8E8A0;}
+td.total-lbl{text-align:left;padding-left:14px;font-family:system-ui;font-size:9px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#3A6A3A;position:sticky;left:0;background:#081208;border-right:2px solid #1A3A1A;}
+td.total-tipo{font-size:9px;font-family:system-ui;background:#081208;}
+
+/* INPUT celda */
+input.reja{width:100%;border:none;background:transparent;font-family:Georgia,serif;font-size:20px;font-weight:900;text-align:center;padding:9px 2px;min-height:52px;outline:none;color:#2A4A2A;-moz-appearance:textfield;caret-color:#7EC850;}
+input.reja::-webkit-inner-spin-button,input.reja::-webkit-outer-spin-button{-webkit-appearance:none;}
+input.reja:focus{background:#0E2A0E;border-radius:4px;color:#D8ECC0;}
+input.reja.v{color:var(--pc);}
+.inicial-lbl{font-size:13px;font-family:Georgia,serif;text-align:center;color:#4A7A5A;padding-top:3px;line-height:1;text-decoration:line-through;font-weight:900;letter-spacing:0.5px;}
+.inicial-lbl.cambio{color:#6AAA7A;}
+
+/* Varianza */
+td.var-celda{text-align:center;padding:8px 4px;min-width:58px;background:#0C1A0C;}
+.var-num{font-family:Georgia,serif;font-size:20px;font-weight:900;}
+.var-ini{font-size:12px;color:#4A7A5A;text-decoration:line-through;display:block;font-family:Georgia,serif;font-weight:900;}
+
+/* PIN OVERLAY */
+.pin-ov{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.97);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;}
+.pin-box{background:#0E1E0E;border:2px solid #3A7A3A;border-radius:20px;padding:32px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 0 60px rgba(126,200,80,0.15);}
+.pin-icon{font-size:38px;font-weight:900;margin-bottom:12px;color:var(--rc,#7EC850);}
+.pin-title{font-size:22px;font-weight:900;color:#D8ECC0;margin-bottom:4px;}
+.pin-sub{font-size:12px;color:#3A6A3A;margin-bottom:24px;letter-spacing:1px;text-transform:uppercase;}
+input.pin-inp{width:100%;background:#081208;border:2px solid #2A5A2A;border-radius:12px;padding:16px;color:#7EC850;font-family:Georgia,serif;font-size:38px;text-align:center;outline:none;letter-spacing:8px;margin-bottom:16px;}
+input.pin-inp:focus{border-color:#7EC850;}
+input.pin-inp.err{border-color:#E85A50;color:#E85A50;}
+.pin-err{color:#F08080;font-size:13px;font-weight:900;margin-bottom:12px;}
+button.pin-ok{width:100%;padding:15px;background:#7EC850;border:none;border-radius:12px;color:#051205;font-size:16px;font-weight:900;cursor:pointer;font-family:system-ui;letter-spacing:1px;}
+button.pin-ok:active{background:#5EA830;}
+
+/* LEYENDA */
+.leyenda{display:flex;gap:16px;padding:6px 16px 10px;flex-wrap:wrap;}
+.ley-item{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+.ley-dot{width:9px;height:9px;border-radius:50%;}
+
+/* PROD ICON */
+.prod-icon{font-size:18px;line-height:1;margin-right:2px;}
+.prod-nom{font-size:12px;font-weight:900;letter-spacing:0.5px;}
+
+@media(min-width:600px){
+  .hdr-top{padding:16px 24px 12px;}
+  .rtabs{padding:0 20px 16px;}
+  .rtab{font-size:14px;padding:12px 16px;}
+  input.reja{font-size:22px;padding:12px 4px;}
+  th.dia-h{min-width:80px;}
+  td.celda{min-width:80px;}
+  .status-bar{padding:12px 20px;}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+var useState=React.useState;
+var useEffect=React.useEffect;
+
+var FB_BASE="https://parrasvalley-default-rtdb.firebaseio.com";
+var PINS={pvt:"pv03",f4h:"fh05",crp:"cr01",fepo:"fp07",mall:"mall"};
+var RANCHOS=[
+  {id:"pvt",  nombre:"PVT",        color:"#F5A623", prods:["Persa","Slicer"]},
+  {id:"fepo", nombre:"Fepo",       color:"#C97AE8", prods:["Morron Rojo","Morron Amarillo","Morron Naranja","Morron Verde"]},
+  {id:"f4h",  nombre:"Forrajera",  color:"#7EC850", prods:["Persa","Morron Rojo","Morron Amarillo","Morron Naranja","Morron Verde","Minibel Rojo","Minibel Amarillo","Minibel Naranja"]},
+  {id:"crp",  nombre:"Cordillera", color:"#60C8FA", prods:["Europeo","Persa","Slicer","Morron Verde","Minibel Rojo","Minibel Amarillo","Minibel Naranja"]}
+];
+var PROD_INFO={
+  "Persa":             {color:"#7EC850", label:"Persa"},
+  "Europeo":           {color:"#4DE8B0", label:"Europeo"},
+  "Slicer":            {color:"#F5A623", label:"Slicer"},
+  "Morron Rojo":       {color:"#F08080", label:"Morron Rojo"},
+  "Morron Amarillo":   {color:"#F5D020", label:"Morron Amarillo"},
+  "Morron Naranja":    {color:"#F5901E", label:"Morron Naranja"},
+  "Morron Verde":      {color:"#50C878", label:"Morron Verde"},
+  "Minibel Rojo":      {color:"#E85080", label:"Minibel Rojo"},
+  "Minibel Amarillo":  {color:"#D4B800", label:"Minibel Amarillo"},
+  "Minibel Naranja":   {color:"#E08020", label:"Minibel Naranja"}
+};
+var DIAS=["Vie","Sab","Dom","Lun","Mar","Mie","Jue"];
+
+function nv(v){var x=parseFloat(v);return isNaN(x)?0:x;}
+
+function getSemIni(){
+  var d=new Date();var dia=d.getDay();
+  var diff=dia>=5?(dia-5):(dia+2);
+  var ini=new Date(d.getFullYear(),d.getMonth(),d.getDate()-diff);
+  var m=ini.getMonth()+1;var dd=ini.getDate();
+  return ini.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(dd<10?"0":"")+dd;
+}
+function addDias(s,n){
+  var d=new Date(s+"T12:00:00");d.setDate(d.getDate()+n);
+  var m=d.getMonth()+1;var dd=d.getDate();
+  return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(dd<10?"0":"")+dd;
+}
+function semLabel(s){
+  var a=new Date(s+"T12:00:00");var b=new Date(s+"T12:00:00");b.setDate(b.getDate()+6);
+  var ms=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+  return a.getDate()+" "+ms[a.getMonth()]+" - "+b.getDate()+" "+ms[b.getMonth()]+" "+b.getFullYear();
+}
+function hoyISO(){
+  var d=new Date();var m=d.getMonth()+1;var dd=d.getDate();
+  return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(dd<10?"0":"")+dd;
+}
+
+// CELDA CON INPUT
+function Celda(props){
+  var s=useState(props.val||"");var v=s[0];var sv=s[1];
+  var sp=useState(props.val||"");var pv=sp[0];var spv=sp[1];
+  if(props.val!==pv){spv(props.val||"");sv(props.val||"");}
+  var pc=props.color||"#7EC850";
+  var hasVal=v&&v!=="0"&&v!=="";
+  var ini=props.ini||"";
+  var cambio=ini&&v&&v!==ini;
+  return(
+    <td className={"celda"+(props.esHoy?" hoy-col":"")} style={{"--pc":pc}}>
+      {!props.modoVar?(
+        <div>
+          {ini&&<div className={"inicial-lbl"+(cambio?" cambio":"")}>{ini}</div>}
+          <input className={"reja"+(hasVal?" v":"")} style={{"--pc":pc,color:hasVal?pc:undefined}} type="number" min="0" step="1"
+            value={v} placeholder="-"
+            onChange={function(e){sv(e.target.value);}}
+            onBlur={function(){if(v!==pv){spv(v);props.onChange(v);}}}
+            onKeyDown={function(e){if(e.key==="Enter"||e.key==="Tab"){if(v!==pv){spv(v);props.onChange(v);}}}}
+            disabled={props.disabled}/>
+        </div>
+      ):(
+        <div className="var-celda">
+          {ini&&<span className="var-ini">{ini}</span>}
+          {(function(){
+            var diff=ini&&v?(nv(v)-nv(ini)):null;
+            if(diff===null)return <span className="var-num" style={{color:"#2A4A2A"}}>--</span>;
+            var col=diff>0?"#F08080":diff<0?"#7EC850":"#3A5A3A";
+            return <span className="var-num" style={{color:col}}>{diff>0?"+"+diff:diff===0?"=":diff}</span>;
+          })()}
+        </div>
+      )}
+    </td>
+  );
+}
+
+// PIN MODAL
+function PinModal(props){
+  var s1=useState("");var v=s1[0];var sv=s1[1];
+  var s2=useState(false);var err=s2[0];var sErr=s2[1];
+  var rancho=props.ranchoId?RANCHOS.find(function(r){return r.id===props.ranchoId;}):null;
+  function ok(){
+    if(v===PINS.mall){sv("");sErr(false);props.onOk("maestro");return;}
+    if(props.ranchoId&&PINS[props.ranchoId]===v){sv("");sErr(false);props.onOk(props.ranchoId);return;}
+    sErr(true);sv("");
+  }
+  return(
+    <div className="pin-ov">
+      <div className="pin-box">
+        <div className="pin-icon">{rancho?rancho.icon:""}</div>
+        <div className="pin-title">{rancho?rancho.nombre:"Campo"}</div>
+        <div className="pin-sub">{rancho?"Ingresa tu PIN":"PIN de acceso"}</div>
+        <input autoFocus className={"pin-inp"+(err?" err":"")} type="password" value={v}
+          onChange={function(e){sv(e.target.value);sErr(false);}}
+          onKeyDown={function(e){if(e.key==="Enter")ok();}}
+          placeholder=""/>
+        {err&&<div className="pin-err">PIN incorrecto</div>}
+        <button className="pin-ok" onClick={ok}>Entrar</button>
+        {props.onCancel&&<button onClick={props.onCancel} style={{width:"100%",marginTop:10,padding:"10px",background:"transparent",border:"1px solid rgba(255,255,255,0.08)",borderRadius:10,color:"#3A5A3A",cursor:"pointer",fontFamily:"system-ui",fontSize:13,fontWeight:700}}>Cancelar</button>}
+      </div>
+    </div>
+  );
+}
+
+function App(){
+  var sS=useState(getSemIni());var semSel=sS[0];var setSemSel=sS[1];
+  var sR=useState("pvt");var ranchoId=sR[0];var setRanchoId=sR[1];
+  var sD=useState({});var datos=sD[0];var setDatos=sD[1];
+  var sSG=useState({});var semGuardada=sSG[0];var setSemGuardada=sSG[1];
+  var sC=useState(false);var carg=sC[0];var setCarg=sC[1];
+  var sG=useState(false);var guardando=sG[0];var setGuardando=sG[1];
+  var sM=useState(null);var msg=sM[0];var setMsg=sM[1];
+  var sMV=useState(false);var modoVar=sMV[0];var setModoVar=sMV[1];
+  var sAuth=useState({});var auth=sAuth[0];var setAuth=sAuth[1];
+  var sPin=useState(null);var pinPend=sPin[0];var setPinPend=sPin[1];
+  // Comparativa
+  var sVC=useState(false);var vistaComp=sVC[0];var setVistaComp=sVC[1];
+  var sRec=useState(null);var reciboDatos=sRec[0];var setReciboDatos=sRec[1];
+  var sCH=useState({});var compHist=sCH[0];var setCompHist=sCH[1];
+  var sCarg2=useState(false);var cargRec=sCarg2[0];var setCargRec=sCarg2[1];
+  var sCompMsg=useState(null);var compMsg=sCompMsg[0];var setCompMsg=sCompMsg[1];
+  var sHistSel=useState(null);var histSel=sHistSel[0];var setHistSel=sHistSel[1];
+
+  function getKey(rid,di){return semSel+"|"+rid+"|"+di;}
+  function getProd(rid,di,prod){return (datos[getKey(rid,di)]||{})[prod]||{org:{rejas:""},conv:{rejas:""}};}
+  function getVal(rid,di,prod,tipo){var p=getProd(rid,di,prod);return(p[tipo]&&p[tipo].rejas)||"";}
+  function getIni(rid,di,prod,tipo){
+    var clave=semSel+"_"+rid;
+    var sem=semGuardada[clave];
+    if(!sem||!sem.dias||!sem.dias[di])return "";
+    var p=sem.dias[di][prod];
+    if(!p||!p[tipo])return "";
+    return p[tipo].rejas||"";
+  }
+
+  useEffect(function(){
+    setCarg(true);
+    Promise.all([
+      fetch(FB_BASE+"/campo-proyeccion-v1.json").then(function(r){return r.json();}).catch(function(){return null;}),
+      fetch(FB_BASE+"/campo-proy-semanas-v1.json").then(function(r){return r.json();}).catch(function(){return null;})
+    ]).then(function(res){
+      setDatos(res[0]||{});setSemGuardada(res[1]||{});setCarg(false);
+    });
+  },[semSel]);
+
+  var FB_COMP="https://parrasvalley-default-rtdb.firebaseio.com/campo-comparativa-hist-v1";
+  var FB_RECIBO_HIST="https://parrasvalley-default-rtdb.firebaseio.com/recibo-hist-v1.json";
+  var FB_RECIBO_INV="https://parrasvalley-default-rtdb.firebaseio.com/recibo-inv-v1.json";
+
+  // Mapeo exacto de rancho texto a ID de campo
+  var RANCHO_MAP={"PVT":"pvt","Cordillera":"crp","Forrajera":"f4h","Fepo":"fepo"};
+  // Mapeo de lineaNombre recibo a prodBase campo
+  var LINEA_MAP={"Persa":"Persa","Slicer":"Slicer","Europeo":"Europeo","Morron":"Morron","Minibel":"Minibel"};
+
+  function prodBase(prod){
+    if(prod.indexOf("Morron")===0)return "Morron";
+    if(prod.indexOf("Minibel")===0)return "Minibel";
+    return prod;
+  }
+
+  function fechaEnSemana(ts,semIni){
+    var d=new Date(ts);
+    var m=d.getMonth()+1;var dd=d.getDate();
+    var iso=d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(dd<10?"0":"")+dd;
+    for(var i=0;i<7;i++){if(addDias(semIni,i)===iso)return i;}
+    return -1;
+  }
+
+  // Parsear fecha dd/mm/yyyy de recibo a yyyy-mm-dd
+  function parseFechaRecibo(f){
+    if(!f)return "";
+    var p=f.split("/");if(p.length<3)return f;
+    var d=p[0].replace(/\D/g,"");var m=p[1].replace(/\D/g,"");var y=p[2].replace(/\D/g,"");
+    if(d.length===1)d="0"+d;if(m.length===1)m="0"+m;
+    return y+"-"+m+"-"+d;
+  }
+
+  useEffect(function(){
+    fetch(FB_COMP+".json").then(function(r){return r.json();}).then(function(d){
+      if(d&&typeof d==="object")setCompHist(d);
+    }).catch(function(){});
+  },[]);
+
+  // Construir mapa real usando ts de cada lote individual
+  function buildMapaReal(histData,invData,fechaFiltroStr){
+    var mapa={};
+    RANCHOS.forEach(function(r){mapa[r.id]={};});
+
+    var fechaFiltroISO="";
+    if(fechaFiltroStr&&fechaFiltroStr.length>=8){
+      var p=fechaFiltroStr.split("/");
+      if(p.length===3){
+        var dd2=p[0].replace(/\D/g,"");var mm2=p[1].replace(/\D/g,"");var yy2=p[2].replace(/\D/g,"");
+        if(dd2.length===1)dd2="0"+dd2;if(mm2.length===1)mm2="0"+mm2;
+        fechaFiltroISO=yy2+"-"+mm2+"-"+dd2;
+      }
+    }
+
+    function tsAISO(ts){
+      var d=new Date(ts);var m=d.getMonth()+1;var dd=d.getDate();
+      return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(dd<10?"0":"")+dd;
+    }
+
+    function procesarLote(lote,lineaNombre){
+      var rid=RANCHO_MAP[lote.rancho];
+      if(!rid)return;
+      var lb=LINEA_MAP[lineaNombre];
+      if(!lb)return;
+      if(!lote.ts)return;
+      var isoLote=tsAISO(lote.ts);
+      if(fechaFiltroISO&&isoLote!==fechaFiltroISO)return;
+      var di=-1;
+      for(var i=0;i<7;i++){if(addDias(semSel,i)===isoLote){di=i;break;}}
+      if(di<0)return;
+      if(!mapa[rid][lb])mapa[rid][lb]={};
+      mapa[rid][lb][di]=(mapa[rid][lb][di]||0)+(parseInt(lote.cajas)||0);
+    }
+
+    if(histData&&Array.isArray(histData)){
+      histData.forEach(function(h){
+        (h.lotes||[]).forEach(function(lote){procesarLote(lote,h.lineaNombre||"");});
+      });
+    }
+    if(invData&&typeof invData==="object"){
+      Object.keys(invData).forEach(function(lineaId){
+        var lin=invData[lineaId];
+        var linNom=lineaId.charAt(0).toUpperCase()+lineaId.slice(1);
+        (lin&&lin.lotes?lin.lotes:[]).forEach(function(lote){procesarLote(lote,linNom);});
+      });
+    }
+    return mapa;
+  }
+
+  var sMapaReal=useState(null);var mapaReal=sMapaReal[0];var setMapaReal=sMapaReal[1];
+  var sFechaJalar=useState("");var fechaJalar=sFechaJalar[0];var setFechaJalar=sFechaJalar[1];
+
+  function jalarRecibo(){
+    setCargRec(true);setReciboDatos(null);setMapaReal(null);
+    Promise.all([
+      fetch(FB_RECIBO_HIST).then(function(r){return r.json();}).catch(function(){return null;}),
+      fetch(FB_RECIBO_INV).then(function(r){return r.json();}).catch(function(){return null;})
+    ]).then(function(res){
+      var histD=res[0];var invD=res[1];
+      setReciboDatos({hist:histD,inv:invD});
+      var mapa=buildMapaReal(histD,invD,fechaJalar);
+      setMapaReal(mapa);setCargRec(false);
+    }).catch(function(){setCargRec(false);setCompMsg("Error al conectar con recibo");});
+  }
+
+  function getRealRecibo(ranchoId,prodBaseName,diaIdx){
+    if(!mapaReal||!mapaReal[ranchoId]||!mapaReal[ranchoId][prodBaseName])return null;
+    return mapaReal[ranchoId][prodBaseName][diaIdx]||0;
+  }
+
+  function guardarComparativaSemana(){
+    var snap={semIni:semSel,guardadoEn:Date.now(),ranchos:{}};
+    RANCHOS.forEach(function(r){
+      var clave=semSel+"_"+r.id;
+      var sem=semGuardada[clave];
+      if(!sem)return;
+      snap.ranchos[r.id]={nombre:r.nombre,prods:{}};
+      r.prods.forEach(function(prod){
+        var pb=prodBase(prod);
+        if(!snap.ranchos[r.id].prods[prod])snap.ranchos[r.id].prods[prod]={dias:{}};
+        DIAS.forEach(function(d,i){
+          var proy=0;
+          if(sem.dias&&sem.dias[i]&&sem.dias[i][prod]){
+            proy+=(nv((sem.dias[i][prod].org&&sem.dias[i][prod].org.rejas)||0));
+            proy+=(nv((sem.dias[i][prod].conv&&sem.dias[i][prod].conv.rejas)||0));
+          }
+          var real=getRealRecibo(r.id,pb,i);
+          snap.ranchos[r.id].prods[prod].dias[i]={proy:proy,real:real,diff:real-proy};
+        });
+      });
+    });
+    var key="sem_"+semSel;
+    fetch(FB_COMP+"/"+key+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(snap)})
+      .then(function(){
+        var nc=Object.assign({},compHist);nc[key]=snap;setCompHist(nc);
+        setCompMsg("Semana guardada en historial");setTimeout(function(){setCompMsg(null);},3000);
+      }).catch(function(){setCompMsg("Error al guardar");});
+  }
+  function setVal(rid,di,prod,tipo,val){
+    var k=getKey(rid,di);
+    var nd=JSON.parse(JSON.stringify(datos));
+    if(!nd[k])nd[k]={};
+    if(!nd[k][prod])nd[k][prod]={org:{rejas:""},conv:{rejas:""}};
+    if(!nd[k][prod][tipo])nd[k][prod][tipo]={rejas:""};
+    nd[k][prod][tipo].rejas=val;
+    setDatos(nd);
+    fetch(FB_BASE+"/campo-proyeccion-v1/"+encodeURIComponent(k)+".json",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(nd[k])}).catch(function(){});
+  }
+
+  function guardarSemana(rid){
+    setGuardando(true);
+    var snap={rancho:rid,semIni:semSel,dias:{}};
+    DIAS.forEach(function(d,i){snap.dias[i]=datos[getKey(rid,i)]||{};});
+    var clave=semSel+"_"+rid;
+    fetch(FB_BASE+"/campo-proy-semanas-v1/"+clave+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(snap)})
+      .then(function(){
+        var ns=JSON.parse(JSON.stringify(semGuardada));ns[clave]=snap;setSemGuardada(ns);
+        setGuardando(false);setMsg("Semana guardada");setTimeout(function(){setMsg(null);},3000);
+      }).catch(function(){setGuardando(false);setMsg("Error al guardar");});
+  }
+  function limpiarTabla(rid){
+    var nd=JSON.parse(JSON.stringify(datos));
+    DIAS.forEach(function(d,i){
+      var k=getKey(rid,i);nd[k]={};
+      fetch(FB_BASE+"/campo-proyeccion-v1/"+encodeURIComponent(k)+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(null)}).catch(function(){});
+    });
+    setDatos(nd);
+    // Borrar tambien la inicial para que no queden valores tachados
+    var clave=semSel+"_"+rid;
+    fetch(FB_BASE+"/campo-proy-semanas-v1/"+clave+".json",{method:"DELETE"}).then(function(){
+      var ns=JSON.parse(JSON.stringify(semGuardada));delete ns[clave];setSemGuardada(ns);
+    }).catch(function(){});
+    setMsg("Tabla limpiada");setTimeout(function(){setMsg(null);},3000);
+  }
+  function borrarInicial(rid){
+    var clave=semSel+"_"+rid;
+    fetch(FB_BASE+"/campo-proy-semanas-v1/"+clave+".json",{method:"DELETE"}).then(function(){
+      var ns=JSON.parse(JSON.stringify(semGuardada));delete ns[clave];setSemGuardada(ns);
+      setMsg("Inicial borrada");setTimeout(function(){setMsg(null);},3000);
+    }).catch(function(){});
+  }
+
+  function totDia(rid,di){
+    var rancho=RANCHOS.find(function(r){return r.id===rid;});
+    if(!rancho)return 0;
+    return rancho.prods.reduce(function(s,prod){return s+nv(getVal(rid,di,prod,"org"))+nv(getVal(rid,di,prod,"conv"));},0);
+  }
+  function totProd(rid,prod){
+    return DIAS.reduce(function(s,d,i){return s+nv(getVal(rid,i,prod,"org"))+nv(getVal(rid,i,prod,"conv"));},0);
+  }
+  function totIniProd(rid,prod){
+    return DIAS.reduce(function(s,d,i){return s+nv(getIni(rid,i,prod,"org"))+nv(getIni(rid,i,prod,"conv"));},0);
+  }
+  function totSem(rid){
+    var rancho=RANCHOS.find(function(r){return r.id===rid;});
+    if(!rancho)return 0;
+    return DIAS.reduce(function(s,d,i){return s+totDia(rid,i);},0);
+  }
+
+  function intentarRancho(rid){
+    if(auth[rid]||auth["maestro"]){setRanchoId(rid);return;}
+    setPinPend(rid);
+  }
+
+  var rancho=RANCHOS.find(function(r){return r.id===ranchoId;})||RANCHOS[0];
+  var cc=rancho.color;
+  var puedeEditar=!!(auth[ranchoId]||auth["maestro"]);
+  var claveGuardada=semSel+"_"+ranchoId;
+  var tieneGuardada=!!(semGuardada[claveGuardada]);
+  var hoyStr=hoyISO();
+
+  return(
+    <div style={{background:"#0C1A0C",minHeight:"100vh",minHeight:"100dvh"}}>
+      {/* HEADER */}
+      <div className="hdr">
+        <div className="hdr-top">
+          <div className="logo-area">
+            <span className="logo-icon"></span>
+            <div>
+              <div className="logo-text">Proyeccion</div>
+              <div className="logo-sub">Parras Valley  Campo</div>
+            </div>
+          </div>
+          <div className="sem-nav">
+            <button className="sem-btn" onClick={function(){setSemSel(addDias(semSel,-7));}}>&lt;</button>
+            <div className="sem-label">
+              <div className="sem-fecha">{semLabel(semSel)}</div>
+              {semSel===getSemIni()&&<div className="sem-hoy">Semana actual</div>}
+            </div>
+            <button className="sem-btn" onClick={function(){setSemSel(addDias(semSel,7));}}>&gt;</button>
+            <button onClick={function(){setVistaComp(!vistaComp);setHistSel(null);}} style={{padding:"6px 10px",background:vistaComp?"#3A6A3A":"rgba(126,200,80,0.08)",border:"2px solid "+(vistaComp?"#7EC850":"rgba(126,200,80,0.2)"),borderRadius:8,color:"#7EC850",fontSize:11,fontWeight:900,cursor:"pointer",fontFamily:"system-ui",marginLeft:4}}>
+              {vistaComp?"Tabla":"Comparativa"}
+            </button>
+          </div>
+        </div>
+        {/* TABS RANCHO */}
+        <div className="rtabs">
+          {RANCHOS.map(function(r){
+            var esSel=ranchoId===r.id;
+            var autenticado=!!(auth[r.id]||auth["maestro"]);
+            return(
+              <button key={r.id} className={"rtab"+(esSel?" on":"")} onClick={function(){intentarRancho(r.id);}}
+                style={esSel?{"--rc":r.color,background:r.color,borderColor:r.color,color:"#051205"}:{"--rc":r.color}}>
+                {r.nombre}
+                <span className={"pin-dot"+(autenticado?" on":"")}/>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* STATUS + ACCIONES - solo en tabla normal */}
+      {!vistaComp&&<div className="main">
+        <div className="status-bar">
+          <div style={{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}>
+            {tieneGuardada
+              ?<span className="sem-badge ok">Inicial guardada</span>
+              :<span className="sem-badge no">Sin inicial</span>}
+            {msg&&<span className="msg-ok">{msg}</span>}
+            {totSem(ranchoId)>0&&<span style={{fontSize:11,color:cc,fontWeight:900,fontFamily:"Georgia,serif"}}>{totSem(ranchoId)} rjs sem.</span>}
+          </div>
+          <div className="acciones">
+            {modoVar
+              ?<button className="btn-accion btn-oro" onClick={function(){setModoVar(false);}}>Ocultar varianza</button>
+              :tieneGuardada&&<button className="btn-accion btn-oro" onClick={function(){setModoVar(true);}}>Ver varianza</button>}
+            {puedeEditar&&<button className="btn-accion btn-verde" onClick={function(){guardarSemana(ranchoId);}} disabled={guardando}>
+              {guardando?"Guardando...":"Guardar inicial"}
+            </button>}
+            {puedeEditar&&<button className="btn-accion btn-oro" onClick={function(){limpiarTabla(ranchoId);}}>Limpiar</button>}
+          </div>
+        </div>
+
+        {/* LEYENDA */}
+        <div className="leyenda">
+          <div className="ley-item" style={{color:"#7EC850"}}><div className="ley-dot" style={{background:"#7EC850"}}/> Organico</div>
+          <div className="ley-item" style={{color:"#C97AE8"}}><div className="ley-dot" style={{background:"#C97AE8"}}/> Convencional</div>
+          {tieneGuardada&&<div className="ley-item" style={{color:"#3A6A3A"}}>Tachado = inicial</div>}
+          {modoVar&&<div className="ley-item" style={{color:"#E8A030"}}>Diferencia vs inicial</div>}
+        </div>
+
+        {/* TABLA */}
+        {carg
+          ?<div style={{textAlign:"center",padding:48,color:"#3A5A3A",fontSize:14}}>Cargando proyeccion...</div>
+          :<div className="tabla-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th className="prod-h">Cultivo</th>
+                  <th style={{width:36}}></th>
+                  {DIAS.map(function(d,i){
+                    var fDia=addDias(semSel,i);
+                    var esHoy=fDia===hoyStr;
+                    return<th key={d} className={"dia-h"+(esHoy?" hoy-h":"")}>{d}{esHoy&&<span className="hoy-lbl">HOY</span>}</th>;
+                  })}
+                  <th className="tot-h">SEM</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rancho.prods.map(function(prod,pi){
+                  var pInfo=PROD_INFO[prod]||{icon:"",color:cc,label:prod};
+                  var pc=pInfo.color;
+                  var totP=totProd(ranchoId,prod);
+                  return[
+                    // Fila ORG
+                    <tr key={prod+"-org"} className="prod-row">
+                      <td className="prod-lbl" rowSpan={2} style={{borderLeft:"3px solid "+pc,background:"#0E1A0E"}}>
+                        <div style={{display:"flex",alignItems:"center",gap:6}}>
+                          <div style={{width:4,height:32,borderRadius:2,background:pc,flexShrink:0}}/>
+                          <div>
+                            <div className="prod-nom" style={{color:pc,fontSize:13}}>{pInfo.label}</div>
+                            <div style={{fontSize:8,color:"#2A4A2A",letterSpacing:1}}>rjs/semana</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="tipo-lbl tipo-org">ORG</td>
+                      {DIAS.map(function(d,i){
+                        var esHoy=addDias(semSel,i)===hoyStr;
+                        return<Celda key={d} color={pc} val={getVal(ranchoId,i,prod,"org")} ini={getIni(ranchoId,i,prod,"org")} esHoy={esHoy} modoVar={modoVar} onChange={function(v){setVal(ranchoId,i,prod,"org",v);}} disabled={!puedeEditar}/>;
+                      })}
+                      <td className="total-celda" rowSpan={2} style={{color:totP>0?pc:"#2A4A2A",background:"#0A160A"}}>
+                        {(function(){
+                          var ini=totIniProd(ranchoId,prod);
+                          var cambio=ini>0&&totP!==ini;
+                          return(
+                            <div>
+                              {ini>0&&<div style={{fontSize:13,fontFamily:"Georgia,serif",fontWeight:900,color:cambio?"#6AAA7A":"#4A7A5A",textDecoration:"line-through",lineHeight:1,marginBottom:2}}>{ini}</div>}
+                              <div style={{fontSize:totP>0?20:14,fontWeight:900,color:totP>0?pc:"#2A4A2A",fontFamily:"Georgia,serif",lineHeight:1}}>{totP>0?totP:"--"}</div>
+                            </div>
+                          );
+                        })()}
+                      </td>
+                    </tr>,
+                    // Fila CONV
+                    <tr key={prod+"-conv"}>
+                      <td className="tipo-lbl tipo-conv">CONV</td>
+                      {DIAS.map(function(d,i){
+                        var esHoy=addDias(semSel,i)===hoyStr;
+                        return<Celda key={d} color={pc} val={getVal(ranchoId,i,prod,"conv")} ini={getIni(ranchoId,i,prod,"conv")} esHoy={esHoy} modoVar={modoVar} onChange={function(v){setVal(ranchoId,i,prod,"conv",v);}} disabled={!puedeEditar}/>;
+                      })}
+                    </tr>,
+                    pi<rancho.prods.length-1?<tr key={prod+"-sep"} className="sep-row"><td colSpan={10}/></tr>:null
+                  ];
+                })}
+                {/* FILA TOTAL DIA */}
+                <tr className="total-row">
+                  <td className="total-lbl">Total dia</td>
+                  <td className="total-tipo"/>
+                  {DIAS.map(function(d,i){
+                    var tot=totDia(ranchoId,i);
+                    var esHoy=addDias(semSel,i)===hoyStr;
+                    return<td key={d} style={{color:tot>0?cc:"#2A4A2A",background:esHoy?"rgba(126,200,80,0.06)":"#0A160A"}}>{tot>0?tot:""}</td>;
+                  })}
+                  <td style={{color:cc,background:"#0A160A",fontFamily:"Georgia,serif",fontWeight:900,fontSize:18}}>{totSem(ranchoId)||""}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>}
+
+      {/* VISTA COMPARATIVA */}
+      {vistaComp&&(
+        <div className="main">
+          <div style={{padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8}}>
+            <div style={{fontSize:14,fontWeight:900,color:"#C8E8A0"}}>Comparativa {semLabel(semSel)}</div>
+            {compMsg&&<span style={{fontSize:11,color:"#7EC850",fontWeight:800}}>{compMsg}</span>}
+            <div style={{display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
+              <div>
+                <div style={{fontSize:9,color:"#3A6A3A",fontWeight:900,letterSpacing:1,textTransform:"uppercase",marginBottom:2}}>Fecha a jalar (dd/mm/aaaa)</div>
+                <div style={{display:"flex",gap:4}}>
+                  <input type="text" placeholder="Ej: 14/07/2026" value={fechaJalar} onChange={function(e){setFechaJalar(e.target.value);}}
+                    style={{background:"#0E1E0E",border:"1px solid #2A5A2A",borderRadius:6,padding:"5px 8px",color:"#C8E8A0",fontFamily:"system-ui",fontSize:12,outline:"none",width:120}}/>
+                  <button onClick={jalarRecibo} disabled={cargRec} className="btn-accion btn-verde" style={{padding:"5px 12px"}}>
+                    {cargRec?"Cargando...":"Jalar"}
+                  </button>
+                </div>
+              </div>
+              <button onClick={guardarComparativaSemana} className="btn-accion btn-oro">Guardar semana</button>
+              <button onClick={function(){setHistSel(histSel==="show"?"hide":"show");}} className="btn-accion" style={{color:"#C97AE8",borderColor:"rgba(201,122,232,0.4)"}}>Historial</button>
+            </div>
+          </div>
+
+          {/* HISTORIAL DE COMPARATIVAS */}
+          {histSel==="show"&&(
+            <div style={{margin:"0 14px 14px",background:"#081208",border:"1px solid rgba(201,122,232,0.2)",borderRadius:10,padding:"12px"}}>
+              <div style={{fontSize:11,fontWeight:900,color:"#C97AE8",letterSpacing:2,marginBottom:10}}>HISTORIAL DE SEMANAS</div>
+              {Object.keys(compHist).length===0
+                ?<div style={{color:"#3A5A3A",fontSize:12}}>Sin semanas guardadas</div>
+                :Object.keys(compHist).sort().reverse().map(function(k){
+                  var h=compHist[k];
+                  return(
+                    <div key={k} style={{borderBottom:"1px solid rgba(255,255,255,0.06)",paddingBottom:8,marginBottom:8}}>
+                      <div style={{fontSize:12,fontWeight:800,color:"#C8E8A0",marginBottom:4}}>{h.semIni?semLabel(h.semIni):k}</div>
+                      {h.ranchos&&Object.keys(h.ranchos).map(function(rid){
+                        var rh=h.ranchos[rid];
+                        var totalProy=0;var totalReal=0;
+                        Object.keys(rh.prods||{}).forEach(function(prod){
+                          Object.keys(rh.prods[prod].dias||{}).forEach(function(di){
+                            totalProy+=(rh.prods[prod].dias[di].proy||0);
+                            totalReal+=(rh.prods[prod].dias[di].real||0);
+                          });
+                        });
+                        var diff=totalReal-totalProy;
+                        return(
+                          <div key={rid} style={{display:"flex",gap:12,fontSize:11,padding:"3px 0",color:"#8899aa"}}>
+                            <span style={{color:"#C8E8A0",fontWeight:700,minWidth:80}}>{rh.nombre}</span>
+                            <span>Proy: <strong style={{color:"#C8E8A0"}}>{totalProy}</strong></span>
+                            <span>Real: <strong style={{color:"#7EC850"}}>{totalReal}</strong></span>
+                            <span style={{color:diff>=0?"#7EC850":"#F08080",fontWeight:700}}>{diff>=0?"+"+diff:diff}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })
+              }
+            </div>
+          )}
+
+          {/* COMPARATIVA ACTUAL */}
+          {(function(){
+            var hayAlguna=RANCHOS.some(function(r){return semGuardada[semSel+"_"+r.id];});
+            if(!hayAlguna)return(
+              <div style={{padding:"30px 20px",textAlign:"center"}}>
+                <div style={{fontSize:14,color:"#3A6A3A",marginBottom:8}}>Sin proyeccion inicial guardada para esta semana</div>
+                <div style={{fontSize:12,color:"#2A4A2A"}}>Ve a la tabla de proyeccion, captura los numeros y da "Guardar inicial". Luego regresa aqui para comparar.</div>
+              </div>
+            );
+            return RANCHOS.map(function(r){
+            var clave=semSel+"_"+r.id;
+            var sem=semGuardada[clave];
+            if(!sem)return null;
+            return(
+              <div key={r.id} style={{margin:"0 0 14px"}}>
+                <div style={{background:r.color+"18",borderTop:"2px solid "+r.color+"55",borderBottom:"2px solid "+r.color+"22",padding:"8px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span style={{fontSize:14,fontWeight:900,color:r.color}}>{r.nombre}</span>
+                  <span style={{fontSize:10,color:"#3A6A3A",fontWeight:700,letterSpacing:1}}>PROY / REAL / DIF</span>
+                </div>
+
+                <div style={{overflowX:"auto"}}>
+                  <table style={{borderCollapse:"collapse",width:"100%",minWidth:460,fontSize:11}}>
+                    <thead>
+                      <tr>
+                        <th style={{background:"#081208",padding:"6px 10px",textAlign:"left",color:"#3A6A3A",fontWeight:900,letterSpacing:1,minWidth:100,position:"sticky",left:0}}>Cultivo</th>
+                        {DIAS.map(function(d,i){
+                          var esHoy=addDias(semSel,i)===hoyStr;
+                          return<th key={d} style={{background:esHoy?"#0A1E0A":"#081208",padding:"4px 4px",textAlign:"center",color:esHoy?"#7EC850":"#3A6A3A",fontWeight:900,letterSpacing:1,minWidth:68,borderBottom:esHoy?"2px solid #7EC850":""}}>
+                            {d}
+                          </th>;
+                        })}
+                        <th style={{background:"#081208",padding:"6px 8px",textAlign:"center",color:"#E8A030",fontWeight:900,letterSpacing:1,minWidth:60}}>SEM</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {r.prods.map(function(prod){
+                        var pb=prodBase(prod);
+                        var pInfo=PROD_INFO[prod]||{color:"#7EC850"};
+                        var totProy=0;var totReal=0;var hayReal=false;
+                        var dias=DIAS.map(function(d,i){
+                          var proy=0;
+                          if(sem.dias&&sem.dias[i]&&sem.dias[i][prod]){
+                            proy+=nv((sem.dias[i][prod].org&&sem.dias[i][prod].org.rejas)||0);
+                            proy+=nv((sem.dias[i][prod].conv&&sem.dias[i][prod].conv.rejas)||0);
+                          }
+                          var real=getRealRecibo(r.id,pb,i);
+                          totProy+=proy;
+                          if(real!==null){totReal+=real;hayReal=true;}
+                          return{proy:proy,real:real};
+                        });
+                        var diff=hayReal?totReal-totProy:null;
+                        return(
+                          <tr key={prod} style={{borderBottom:"1px solid #0E220E"}}>
+                            <td style={{background:"#0E1A0E",padding:"6px 10px",fontWeight:700,color:pInfo.color,fontSize:12,position:"sticky",left:0,borderLeft:"3px solid "+pInfo.color}}>{prod}</td>
+                            {dias.map(function(di,i){
+                              var esHoy=addDias(semSel,i)===hoyStr;
+                              var dif=di.real!==null?di.real-di.proy:null;
+                              return(
+                                <td key={i} style={{background:esHoy?"#0A1E0A":"#0C1A0C",padding:"5px 3px 5px 6px",textAlign:"center",verticalAlign:"middle"}}>
+                                  <div style={{display:"flex",alignItems:"baseline",gap:4,justifyContent:"center"}}>
+                                    {i===0&&<span style={{fontSize:9,fontWeight:900,color:"#4A7A5A",whiteSpace:"nowrap",minWidth:56,textAlign:"right"}}>Proyeccion</span>}
+                                    <span style={{fontSize:13,fontWeight:900,color:"#6AAA7A",fontFamily:"Georgia,serif",lineHeight:1.1}}>{di.proy>0?di.proy:"-"}</span>
+                                  </div>
+                                  <div style={{width:"100%",height:1,background:"#1A3A2A",margin:"3px 0"}}/>
+                                  <div style={{display:"flex",alignItems:"baseline",gap:4,justifyContent:"center"}}>
+                                    {i===0&&<span style={{fontSize:9,fontWeight:900,color:"#7EC850",whiteSpace:"nowrap",minWidth:56,textAlign:"right"}}>Corte</span>}
+                                    <span style={{fontSize:15,fontWeight:900,color:di.real!==null?"#7EC850":"#1A3A2A",fontFamily:"Georgia,serif",lineHeight:1.1}}>{di.real!==null?(di.real>0?di.real:"0"):"-"}</span>
+                                  </div>
+                                  {dif!==null&&di.proy>0&&<div style={{display:"flex",alignItems:"baseline",gap:4,justifyContent:"center"}}>
+                                    {i===0&&<span style={{fontSize:9,fontWeight:900,color:dif>0?"#50C878":"#F08080",whiteSpace:"nowrap",minWidth:56,textAlign:"right"}}>Diferencia</span>}
+                                    <span style={{fontSize:12,fontWeight:900,color:dif===0?"#8899aa":dif>0?"#50C878":"#F08080",fontFamily:"Georgia,serif",lineHeight:1}}>{dif>0?"+"+dif:dif===0?"=":dif}</span>
+                                  </div>}
+                                </td>
+                              );
+                            })}
+                            <td style={{background:"#081208",padding:"5px 6px",textAlign:"center",verticalAlign:"middle"}}>
+                              <div style={{fontSize:14,fontWeight:900,color:"#6AAA7A",fontFamily:"Georgia,serif"}}>{totProy>0?totProy:"-"}</div>
+                              <div style={{width:"100%",height:1,background:"#1A3A2A",margin:"3px 0"}}/>
+                              {hayReal&&<div style={{fontSize:15,fontWeight:900,color:"#7EC850",fontFamily:"Georgia,serif"}}>{totReal}</div>}
+                              {diff!==null&&<div style={{fontSize:13,fontWeight:900,color:diff===0?"#8899aa":diff>0?"#50C878":"#F08080",fontFamily:"Georgia,serif",marginTop:2}}>{diff>0?"+"+diff:diff===0?"=":diff}</div>}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          });})()}
+          {!mapaReal&&<div style={{padding:"12px 14px",fontSize:11,color:"#3A5A3A"}}>Escribe la fecha y toca "Jalar" para cargar los cortes reales.</div>}
+        </div>
+      )}
+
+      {/* PIN MODAL POR RANCHO */}
+      {pinPend&&(
+        <PinModal ranchoId={pinPend}
+          onOk={function(rol){
+            var na=Object.assign({},auth);na[rol]=true;setAuth(na);
+            if(rol==="maestro"){RANCHOS.forEach(function(r){na[r.id]=true;});}
+            setRanchoId(pinPend);setPinPend(null);
+          }}
+          onCancel={function(){setPinPend(null);}}/>
+      )}
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
